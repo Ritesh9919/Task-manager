@@ -1,3 +1,5 @@
+const Tasks = require('../models/task');
+
 module.exports.getAllTask = (req, res) =>{
    return res.json({
     success:true,
@@ -6,11 +8,21 @@ module.exports.getAllTask = (req, res) =>{
 }
 
 
-module.exports.createTask = (req, res) => {
-    return res.json({
+module.exports.createTask = async (req, res) => {
+    try{
+    const {name, completed} = req.body;
+    const task = await Tasks.create({
+        name:name,
+        completed:completed
+    });
+    return res.status(200).json({
         success:true,
-        message:'Task created'
+        data:task
     })
+}catch(err) {
+    console.log(err);
+}
+
 }
 
 
