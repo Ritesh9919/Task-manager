@@ -1,8 +1,16 @@
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
-    name:String,
-    completed:Boolean
+    name:{
+        type:String,
+        required:true,
+        trim:true,
+        maxLength:20
+    },
+    completed:{
+        type:Boolean,
+        default:false
+    }
 }, {timestamps:true});
 
 
