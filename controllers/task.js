@@ -60,11 +60,29 @@ module.exports.getTask = async (req, res) =>{
 }
 
 
-module.exports.updateTask = (req, res) => {
-    return res.json({
-        success:true,
-        message:'updated'
-    })
+module.exports.updateTask = async(req, res) => {
+    try {
+        const {id} = req.params;
+        const task = await Tasks.findByIdAndUpdate({_id:id}, req.body, {
+            new:true,
+            runValidators:true
+        });
+        if(!task) {
+            return res.status(404).json({
+                msg:`no task with this ${id}`
+            })
+        }
+        return res.status(200).json({
+            data:{
+                task:task
+            }
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            msg:error
+        })
+    }
 }
 
 
