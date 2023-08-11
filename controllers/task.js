@@ -1,4 +1,4 @@
-const { error } = require('console');
+const {createCustomError} = require('../error/custom_error');
 const Tasks = require('../models/task');
 
 module.exports.getAllTask = async (req, res) =>{
@@ -38,14 +38,13 @@ module.exports.createTask = async (req, res) => {
 }
 
 
-module.exports.getTask = async (req, res) =>{
+module.exports.getTask = async (req, res, next) =>{
     try {
         const {id} = req.params;
         const task = await Tasks.findById(id);
         if(!task) {
-            return res.status(404).json({
-                msg:`no task with this ${id}`
-            })
+            return next(createCustomError(`no task with this ${id}`, 404));
+
         }
         return res.status(200).json({
             data:{
@@ -60,17 +59,16 @@ module.exports.getTask = async (req, res) =>{
 }
 
 
-module.exports.updateTask = async(req, res) => {
+module.exports.updateTask = async(req, res, next) => {
     try {
         const {id} = req.params;
         const task = await Tasks.findByIdAndUpdate({_id:id}, req.body, {
             new:true,
-            runValidators:true
+            runValidators:true,
+            overwrite:true
         });
         if(!task) {
-            return res.status(404).json({
-                msg:`no task with this ${id}`
-            })
+            return next(createCustomError(`no task with this ${id}`, 404));
         }
         return res.status(200).json({
             data:{
@@ -86,14 +84,12 @@ module.exports.updateTask = async(req, res) => {
 }
 
 
-module.exports.deleteTask = async (req, res) => {
+module.exports.deleteTask = async (req, res, next) => {
     try {
         const {id} = req.params;
         const task = await Tasks.findOneAndDelete({_id:id});
         if(!task) {
-            return res.status(404).json({
-                msg:`no task with this ${id}`
-            })
+            return next(createCustomError(`no task with this ${id}`, 404));
         }
 
         return res.status(200).json({
